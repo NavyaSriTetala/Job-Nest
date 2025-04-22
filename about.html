@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us - Job Nest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #f9fafb;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #4f46e5;
+      padding: 1rem 2rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header h2 {
+      font-weight: 700;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+    }
+
+    nav ul li {
+      margin-left: 1rem;
+      position: relative;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #c7d2fe;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: white;
+      min-width: 120px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      border-radius: 6px;
+      top: 100%;
+      right: 0;
+    }
+
+    .dropdown-content a {
+      color: #333;
+      padding: 10px;
+      display: block;
+      text-decoration: none;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      nav ul {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+        margin-top: 1rem;
+      }
+
+      nav ul.active {
+        display: flex;
+      }
+
+      nav ul li {
+        margin: 10px 0;
+      }
+
+      .dropdown-content {
+        position: static;
+        box-shadow: none;
+      }
+    }
+
+    .about-container {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .about-section {
+      background: #fff;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .about-section:hover {
+      transform: translateY(-5px);
+    }
+
+    .about-section h2 {
+      font-size: 1.8rem;
+      color: #4f46e5;
+      margin-bottom: 1rem;
+    }
+
+    .about-section p {
+      font-size: 1.05rem;
+      color: #555;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .stat-card {
+      background: #e0e7ff;
+      flex: 1;
+      padding: 1.5rem;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 200px;
+    }
+
+    .stat-card h3 {
+      font-size: 2rem;
+      color: #4f46e5;
+    }
+
+    .stat-card p {
+      margin-top: 0.5rem;
+      color: #333;
+    }
+
+    .testimonial-section {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .testimonial {
+      background: #f3f4f6;
+      padding: 1.5rem;
+      border-left: 4px solid #6366f1;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+    }
+
+    .testimonial p {
+      font-style: italic;
+      color: #444;
+      margin: 0;
+    }
+
+    .testimonial span {
+      display: block;
+      text-align: right;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: #e0e7ff;
+      color: #333;
+      font-size: 0.9rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>Job Nest</h2>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <nav>
+      <ul id="navList">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="browsejobsindex.html">Browse Jobs</a></li>
+        <li><a href="postjobsindex.html">Post Job</a></li>
+        <li class="dropdown">
+          <a href="#">👤</a>
+          <div class="dropdown-content">
+            <a href="login.html">Login</a>
+            <a href="signup.html">Signup</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="about-container">
+    <div class="about-section">
+      <h2>Our Mission</h2>
+      <p>We aim to revolutionize the freelancing world by creating a platform that connects talent and opportunities without the clutter and noise. At Job Nest, we value simplicity, security, and results.</p>
+    </div>
+
+    <div class="about-section">
+      <h2>Vision & Core Values</h2>
+      <p>Our vision is to create an inclusive digital marketplace that empowers freelancers across the globe. We believe in:</p>
+      <ul style="margin-top: 1rem; color: #555; padding-left: 1.2rem;">
+        <li>✔️ Transparency in every transaction</li>
+        <li>✔️ Equal opportunities for all skill levels</li>
+        <li>✔️ User-first design and seamless experience</li>
+        <li>✔️ Building a trusted, verified community</li>
+      </ul>
+    </div>
+
+    <div class="about-section">
+      <h2>How We Work</h2>
+      <p>Job Nest is built with modern technologies and backed by real user feedback. Clients can post jobs, freelancers apply or get matched, and collaboration happens securely through our platform — end to end. We handle onboarding, profiles, reviews, and communications to keep your workflow smooth.</p>
+    </div>
+
+    <div class="about-section">
+      <h2>Platform in Numbers</h2>
+      <div class="stats">
+        <div class="stat-card">
+          <h3>10K+</h3>
+          <p>Registered Freelancers</p>
+        </div>
+        <div class="stat-card">
+          <h3>4.8⭐</h3>
+          <p>Average Client Rating</p>
+        </div>
+        <div class="stat-card">
+          <h3>500+</h3>
+          <p>Jobs Completed Monthly</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <h2>What Our Users Say</h2>
+      <div class="testimonial-section">
+        <div class="testimonial">
+          <p>"I found my first freelance job on Job Nest within a week. The interface is clean and the client was legit. Highly recommend!"</p>
+          <span>— Rahul M., Web Developer</span>
+        </div>
+        <div class="testimonial">
+          <p>"As a startup, we needed quick help with UI/UX. Job Nest connected us to an awesome designer in 24 hours. Smooth and reliable!"</p>
+          <span>— Ayesha K., Founder @StartupHub</span>
+        </div>
+        <div class="testimonial">
+          <p>"The platform's ease of use and verification process gave me confidence to hire freelancers regularly. Job Nest is now my go-to!"</p>
+          <span>— Vikram S., Business Owner</span>
+        </div>
+        <div class="testimonial">
+          <p>"Their customer support is top-notch. They helped me resolve a payment issue in no time. Totally recommend it!"</p>
+          <span>— Sneha P., UX Consultant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy;  2025 Job Nest. All rights reserved. | Designed for modern freelancing needs.
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("navList").classList.toggle("active");
+    }
+  const currentLocation = window.location.href;
+  const navLinks = document.querySelectorAll('nav a');
+  navLinks.forEach(link => {
+    if (link.href === currentLocation) {
+      link.style.borderBottom = "2px solid #c7d2fe";
+    }
+  });
+</script>
+</body>
+</html>

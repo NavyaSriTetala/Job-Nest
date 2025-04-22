@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pending Jobs - Job Nest Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f4f6fc;
+      color: #333;
+    }
+
+    header {
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-name {
+      font-weight: 500;
+      background-color: white;
+      color: #4f46e5;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 2rem 0 1rem;
+      font-size: 2rem;
+      color: #4f46e5;
+    }
+
+    .job-list {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .job-card {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .job-card h3 {
+      margin-bottom: 0.5rem;
+      color: #3730a3;
+    }
+
+    .job-card p {
+      margin: 0.3rem 0;
+    }
+
+    .job-card .btn-group {
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      font-weight: 500;
+    }
+
+    .btn.approve {
+      background-color: #10b981;
+      color: white;
+    }
+
+    .btn.reject {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s ease;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+ 
+<header>
+    <h2>Job Nest Admin</h2>
+    <nav style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="adminhome.html" style="color: white; text-decoration: none; font-weight: 500;">Home</a>
+      <a href="dashboardoverview.html" style="color: white; text-decoration: none; font-weight: 500;">Dashboard Overview</a>
+      <a href="pendingjobs.html" style="color: white; text-decoration: none; font-weight: 500;">Job Verifications</a>
+      <a href="manageusers.html" style="color: white; text-decoration: none; font-weight: 500;">Manage Users</a>
+      <a href="supportfeedback.html" style="color: white; text-decoration: none; font-weight: 500;">Support Feedback</a>
+      <button id="logoutBtn" style="background: #ef4444; border: none; color: white; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; display: inline-block; pointer-events: auto; z-index: 9999 !important; position: relative;">Logout</button>
+<div class="admin-name" id="adminName">Admin</div>
+    </nav>
+  </header>
+  
+
+  <h1>Pending Job Approvals</h1>
+  <div class="job-list" id="jobList"></div>
+
+  <div class="popup" id="popup">Action completed!</div>
+
+  <script>
+    const admin = JSON.parse(localStorage.getItem("user"));
+    if (admin && admin.role === "admin") {
+      document.getElementById("adminName").textContent = admin.email;
+    }
+  
+    const jobListEl = document.getElementById("jobList");
+    const popup = document.getElementById("popup");
+  
+    function showPopup(message) {
+      popup.textContent = message;
+      popup.classList.add("show");
+      setTimeout(() => popup.classList.remove("show"), 2500);
+    }
+  
+    function loadJobs() {
+      const jobs = JSON.parse(localStorage.getItem("jobnest_pending_jobs")) || [];
+      jobListEl.innerHTML = '';
+  
+      if (jobs.length === 0) {
+        jobListEl.innerHTML = '<p style="text-align:center;">No pending jobs to review.</p>';
+        return;
+      }
+  
+      jobs.forEach((job, index) => {
+        const card = document.createElement("div");
+        card.className = "job-card";
+  
+        card.innerHTML = `
+          <h3>${job.title}</h3>
+          <p><strong>Client:</strong> ${job.name}</p>
+          <p><strong>Email:</strong> ${job.email}</p>
+          <p><strong>Contact:</strong> ${job.contact}</p>
+          <p><strong>Category:</strong> ${job.category}</p>
+          <p><strong>Budget:</strong> ₹${job.budget}</p>
+          <p><strong>Deadline:</strong> ${job.deadline}</p>
+          <p><strong>Description:</strong> ${job.description}</p>
+          <div class="btn-group">
+            <button class="btn approve" onclick="approveJob(${index})">Approve</button>
+            <button class="btn reject" onclick="rejectJob(${index})">Reject</button>
+          </div>
+        `;
+  
+        jobListEl.appendChild(card);
+      });
+    }
+  
+    function approveJob(index) {
+      const pending = JSON.parse(localStorage.getItem("jobnest_pending_jobs")) || [];
+      const approved = JSON.parse(localStorage.getItem("jobnest_approved_jobs")) || [];
+  
+      const job = pending.splice(index, 1)[0];
+      approved.push(job);
+  
+      localStorage.setItem("jobnest_pending_jobs", JSON.stringify(pending));
+      localStorage.setItem("jobnest_approved_jobs", JSON.stringify(approved));
+  
+      loadJobs();
+      showPopup("Job approved and published!");
+    }
+  
+    function rejectJob(index) {
+  const pending = JSON.parse(localStorage.getItem("jobnest_pending_jobs")) || [];
+  const rejected = JSON.parse(localStorage.getItem("jobnest_rejected_jobs")) || [];
+  
+  // Get the job being rejected
+  const job = pending.splice(index, 1)[0];
+  
+  // Add it to the rejected jobs list
+  rejected.push(job);
+  
+  // Save the updated lists back to localStorage
+  localStorage.setItem("jobnest_pending_jobs", JSON.stringify(pending));
+  localStorage.setItem("jobnest_rejected_jobs", JSON.stringify(rejected));
+  
+  loadJobs();
+  showPopup("Job rejected.");
+}
+
+  
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+  localStorage.removeItem("user");
+  showPopup("Logged out successfully! 👋");
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 2000);
+});
+
+  
+    loadJobs();
+  </script>
+  
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Jobs - Job Nest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Same CSS as before */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { background-color: #f4f6fc; color: #333; }
+
+    header {
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+    }
+
+    nav ul li {
+      margin-left: 1rem;
+      position: relative;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      nav ul {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+        margin-top: 1rem;
+        background-color: #4f46e5;
+        padding: 1rem;
+      }
+
+      nav ul.show-menu {
+        display: flex;
+      }
+
+      nav ul li {
+        margin: 10px 0;
+      }
+
+      .dropdown-content {
+        position: static;
+        box-shadow: none;
+        background-color: #fff;
+      }
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: white;
+      min-width: 120px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      border-radius: 6px;
+      top: 100%;
+      right: 0;
+      z-index: 999;
+    }
+
+    .dropdown-content a {
+      color: #333;
+      padding: 10px;
+      display: block;
+      text-decoration: none;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 2rem 0;
+      color: #4f46e5;
+    }
+
+    .filters {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .filters input, .filters select {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .job-list {
+      max-width: 1000px;
+      margin: 1rem auto;
+      padding: 1rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .job-card {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .job-card h3 {
+      color: #3730a3;
+    }
+
+    .job-card p {
+      margin: 0.3rem 0;
+    }
+
+    .btn-apply {
+      margin-top: 1rem;
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-apply:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      pointer-events: none; /* Prevents any ghost overlap */
+    }
+
+    .popup {
+      position: fixed;
+      top: 100px;
+      right: 100px;
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s ease;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Job Nest</h2>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <nav>
+      <ul id="navList">
+        <li><a href="freelancerhome.html">Home</a></li>
+        <li><a href="freelancerabout.html">About</a></li>
+        <li><a href="freelancercontact.html">Contact</a></li> <!-- Corrected Contact Link -->
+        <li><a href="browsejobs.html">Browse Jobs</a></li> <!-- Corrected Browse Jobs Link -->
+        <li class="dropdown">
+          <a href="#">👤</a>
+          <div class="dropdown-content" id="userDropdown">
+            <a href="freelancerdashboard.html">Dashboard</a>
+            <a href="index.html" onclick="return confirmLogout()">Logout</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <h1>Available Jobs</h1>
+
+  <div class="filters">
+    <input type="text" id="searchInput" placeholder="Search by title or description...">
+    <select id="categoryFilter">
+      <option value="">All Categories</option>
+      <option>Web Development</option>
+      <option>Graphic Design</option>
+      <option>Content Writing</option>
+      <option>Data Entry</option>
+      <option>App Development</option>
+      <option>Digital Marketing</option>
+      <option>Video Editing</option>
+      <option>Voice Over</option>
+    </select>
+    <input type="number" id="minBudget" placeholder="Min Budget">
+    <input type="number" id="maxBudget" placeholder="Max Budget">
+  </div>
+
+  <div class="job-list" id="jobList"></div>
+  <div class="popup" id="popup"></div>
+
+  <script>
+    const jobList = document.getElementById("jobList");
+    const popup = document.getElementById("popup");
+    const approvedJobs = JSON.parse(localStorage.getItem("jobnest_approved_jobs")) || [];
+
+    function showPopup(msg) {
+      popup.textContent = msg;
+      popup.classList.add("show");
+      setTimeout(() => popup.classList.remove("show"), 2500);
+    }
+
+    function renderJobs(jobs) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const appliedJobsKey = user ? "jobnest_applied_jobs_" + user.email : null;
+      const appliedJobs = user ? JSON.parse(localStorage.getItem(appliedJobsKey)) || [] : [];
+
+      jobList.innerHTML = jobs.length === 0 ? '<p style="text-align:center;">No jobs found.</p>' : '';
+
+      jobs.forEach((job, i) => {
+        const alreadyApplied = appliedJobs.some(j => j.title === job.title && j.email === job.email);
+
+        const card = document.createElement("div");
+        card.className = "job-card";
+        card.innerHTML = `
+          <h3>${job.title}</h3>
+          <p><strong>Client:</strong> ${job.name}</p>
+          <p><strong>Email:</strong> ${job.email}</p>
+          <p><strong>Contact:</strong> ${job.contact}</p>
+          <p><strong>Category:</strong> ${job.category}</p>
+          <p><strong>Budget:</strong> ₹${job.budget}</p>
+          <p><strong>Deadline:</strong> ${job.deadline}</p>
+          <p><strong>Description:</strong> ${job.description}</p>
+          <button class="btn-apply" ${alreadyApplied ? "disabled" : ""} onclick="applyToJob(${i}, event)">
+
+            ${alreadyApplied ? "✅ Applied" : "Apply"}
+          </button>
+        `;
+        jobList.appendChild(card);
+      });
+    }
+
+    function applyToJob(jobIndex, event) {
+  event?.stopPropagation(); // Prevent dropdown or nav event issues
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || user.role !== "freelancer") {
+    showPopup("Only freelancers can apply.");
+    return;
+  }
+
+  const job = approvedJobs[jobIndex];
+  const appliedJobsKey = "jobnest_applied_jobs_" + user.email;
+  const existingApplications = JSON.parse(localStorage.getItem(appliedJobsKey)) || [];
+
+  const alreadyApplied = existingApplications.some(j => j.title === job.title && j.email === job.email);
+  if (alreadyApplied) {
+    showPopup("You already applied for this job.");
+    return;
+  }
+
+  existingApplications.push(job);
+  localStorage.setItem(appliedJobsKey, JSON.stringify(existingApplications));
+  showPopup("Application submitted!");
+  filterJobs(); // Refresh view with ✅
+}
+
+
+    function filterJobs() {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const category = document.getElementById("categoryFilter").value;
+      const min = parseInt(document.getElementById("minBudget").value);
+      const max = parseInt(document.getElementById("maxBudget").value);
+
+      const filtered = approvedJobs.filter(job => {
+        const matchSearch = job.title.toLowerCase().includes(search) || job.description.toLowerCase().includes(search);
+        const matchCategory = !category || job.category === category;
+        const matchBudget = (!min || job.budget >= min) && (!max || job.budget <= max);
+        return matchSearch && matchCategory && matchBudget;
+      });
+
+      renderJobs(filtered);
+    }
+
+    document.getElementById("searchInput").addEventListener("input", filterJobs);
+    document.getElementById("categoryFilter").addEventListener("change", filterJobs);
+    document.getElementById("minBudget").addEventListener("input", filterJobs);
+    document.getElementById("maxBudget").addEventListener("input", filterJobs);
+
+    function toggleMenu() {
+      document.getElementById("navList").classList.toggle("show-menu");
+    }
+
+    function toggleDropdown(e) {
+      e.preventDefault();
+      const dropdown = document.getElementById("userDropdown");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    window.addEventListener("click", function (e) {
+      if (!e.target.closest('.dropdown')) {
+        document.getElementById("userDropdown").style.display = 'none';
+      }
+    });
+
+    renderJobs(approvedJobs);
+  </script>
+</body>
+</html>

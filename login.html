@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Job Nest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background-color: #f9fafb;
+    }
+
+    .login-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      background-color: white;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .login-container {
+      padding: 2rem 2.5rem;
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #4f46e5;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .form-group button {
+      width: 100%;
+      padding: 0.9rem;
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .form-group button:hover {
+      background-color: #4338ca;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .signup-link a {
+      color: #4f46e5;
+      text-decoration: none;
+    }
+
+    .image-container {
+      flex: 1;
+      min-width: 300px;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .login-wrapper {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .image-container {
+        padding: 1rem;
+      }
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 43px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    .forgot-password {
+      text-align: right;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .forgot-password a {
+      font-size: 0.9rem;
+      text-decoration: none;
+      color: #4f46e5;
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s ease;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <div class="login-container">
+      <h2>Job Nest</h2>
+      <h2>Welcome Back!</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="role">Select Role</label>
+          <select id="role" name="role" required>
+            <option value="">-- Select Role --</option>
+            <option value="client">Client</option>
+            <option value="freelancer">Freelancer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group password-wrapper">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+          <span class="toggle-password" onclick="togglePassword()">👁️</span>
+        </div>
+
+        <div class="forgot-password">
+          <a href="forgotpassword.html">Forgot Password?</a>
+        </div>
+
+        <div class="form-group">
+          <button type="submit">Login</button>
+        </div>
+
+        <div class="signup-link">
+          Don’t have an account? <a href="signup.html">Sign up here</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="image-container">
+      <img src="https://i.ibb.co/PzjjzBt8/Work-from-home.jpg" alt="Login Illustration">
+    </div>
+  </div>
+
+  <div class="popup" id="popup">Login successful! 🎉</div>
+
+  <script>
+    function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      const popup = document.getElementById('popup');
+
+      if (role === 'admin') {
+        // Fixed admin credentials
+        if (email === 'admin@jobnest.com' && password === 'admin123') {
+          popup.textContent = 'Admin login successful! 🎉';
+          popup.classList.add('show');
+
+          localStorage.setItem("user", JSON.stringify({ email, role }));
+
+          setTimeout(() => {
+            popup.classList.remove('show');
+            this.reset();
+            window.location.href = 'adminhome.html';
+          }, 2000);
+        } else {
+          popup.textContent = 'Invalid admin credentials.';
+          popup.classList.add('show');
+          setTimeout(() => popup.classList.remove('show'), 3000);
+        }
+        return; // Stop further execution
+      }
+
+      // Check localStorage for client/freelancer
+      const userData = localStorage.getItem('jobnest_user_' + email);
+
+      if (!userData) {
+        popup.textContent = 'User not found. Please sign up first!';
+        popup.classList.add('show');
+        setTimeout(() => popup.classList.remove('show'), 3000);
+        return;
+      }
+
+      const user = JSON.parse(userData);
+
+      if (user.password === password && user.role === role) {
+        popup.textContent = 'Login successful! 🎉';
+        popup.classList.add('show');
+
+        localStorage.setItem("user", JSON.stringify({ email, role }));
+
+        setTimeout(() => {
+          popup.classList.remove('show');
+          this.reset();
+
+          if (role === 'client') {
+            window.location.href = 'clienthome.html';
+          } else if (role === 'freelancer') {
+            window.location.href = 'freelancerhome.html';
+          }
+        }, 2000);
+      } else {
+        popup.textContent = 'Invalid credentials or role. Try again.';
+        popup.classList.add('show');
+        setTimeout(() => popup.classList.remove('show'), 3000);
+      }
+
+
+      if (user.password === password && user.role === role) {
+        popup.textContent = 'Login successful! 🎉';
+        popup.classList.add('show');
+
+        localStorage.setItem("user", JSON.stringify({ email, role }));
+
+        setTimeout(() => {
+          popup.classList.remove('show');
+          this.reset();
+
+          // Role-based redirection
+          if (role === 'client') {
+            window.location.href = 'clienthome.html';
+          } else if (role === 'freelancer') {
+            window.location.href = 'freelancerhome.html';
+          } else if (role === 'admin') {
+            window.location.href = 'adminhome.html';
+          }
+        }, 2000);
+      } else {
+        popup.textContent = 'Invalid credentials or role. Try again.';
+        popup.classList.add('show');
+        setTimeout(() => popup.classList.remove('show'), 3000);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post Job - Job Nest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: #f9fafb;
+    }
+
+    .wrapper {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+      background-color: #f9fafb;
+      flex-wrap: wrap;
+    }
+
+    .form-section {
+      flex: 1;
+      min-width: 320px;
+      padding: 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: #ffffff;
+    }
+
+    .form-section .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #4f46e5;
+      margin-bottom: 1rem;
+    }
+
+    .form-section h2 {
+      color: #4f46e5;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group button {
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #4f46e5;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .form-group button:hover {
+      background-color: #3730a3;
+    }
+
+    .image-section {
+      flex: 1;
+      min-width: 320px;
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .image-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    #customCategoryGroup {
+      display: none;
+    }
+
+    .success-message {
+      text-align: center;
+      color: green;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .wrapper {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .image-section {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="form-section">
+      <div class="brand">Job Nest</div>
+      <h2>Post a New Job</h2>
+      <form id="postJobForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" readonly required />
+        </div>
+
+      <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" id="name" required />
+  </div>
+  
+  <div class="form-group">
+    <label for="contact">Contact</label>
+    <input type="text" id="contact" required />
+  </div>
+  <div class="form-group">
+    <label for="title">Job Title</label>
+    <input type="text" id="title" required />
+  </div>
+  
+
+        <div class="form-group">
+          <label for="description">Job Description</label>
+          <textarea id="description" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" required>
+            <option value="">-- Select Category --</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Graphic Design">Graphic Design</option>
+            <option value="Content Writing">Content Writing</option>
+            <option value="Data Entry">Data Entry</option>
+            <option value="App Development">App Development</option>
+            <option value="Digital Marketing">Digital Marketing</option>
+            <option value="Video Editing">Video Editing</option>
+            <option value="Voice Over">Voice Over</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="customCategoryGroup">
+          <label for="customCategory">Enter Custom Category</label>
+          <input type="text" id="customCategory" />
+        </div>
+
+        <div class="form-group">
+          <label for="budget">Budget (₹)</label>
+          <input type="number" id="budget" min="100" required />
+        </div>
+
+        <div class="form-group">
+          <label for="deadline">Deadline</label>
+          <input type="date" id="deadline" required />
+        </div>
+
+        <div class="form-group">
+          <button type="submit">Submit for Verification</button>
+        </div>
+
+        <div class="success-message" id="successMessage"></div>
+      </form>
+    </div>
+
+    <div class="image-section">
+      <img src="https://i.ibb.co/5x9WD14t/65-Mj-Ex-Mi53-MDEy-Lm4w-MDEu-Mj-TQo-S5w-Ni4y-NA.jpg" alt="Post Job Illustration" />
+    </div>
+  </div>
+
+  <script>
+    // Auto-fill from localStorage
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    if (currentUser) {
+      document.getElementById("email").value = currentUser.email || "";
+    }
+  
+    const categorySelect = document.getElementById("category");
+    const customCategoryGroup = document.getElementById("customCategoryGroup");
+    const customCategoryInput = document.getElementById("customCategory");
+  
+    categorySelect.addEventListener("change", () => {
+      if (categorySelect.value === "Other") {
+        customCategoryGroup.style.display = "block";
+        customCategoryInput.required = true;
+      } else {
+        customCategoryGroup.style.display = "none";
+        customCategoryInput.required = false;
+      }
+    });
+  
+    document.getElementById("postJobForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+  
+      const job = {
+        email: document.getElementById("email").value,
+        name: document.getElementById("name").value,
+        contact: document.getElementById("contact").value,
+        title: document.getElementById("title")?.value || "Untitled Job",
+        description: document.getElementById("description").value,
+        category: categorySelect.value === "Other" ? customCategoryInput.value : categorySelect.value,
+        budget: document.getElementById("budget").value,
+        deadline: document.getElementById("deadline").value,
+        status: "pending"
+      };
+  
+      const pendingJobs = JSON.parse(localStorage.getItem("jobnest_pending_jobs")) || [];
+      pendingJobs.push(job);
+      localStorage.setItem("jobnest_pending_jobs", JSON.stringify(pendingJobs));
+  
+      document.getElementById("successMessage").textContent = "Job submitted for verification successfully!";
+  
+      setTimeout(() => {
+        window.location.href = "clienthome.html";
+      }, 1500);
+    });
+  </script>
+  </body>
+</html>

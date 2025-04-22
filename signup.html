@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup - Job Nest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body, html { height: 100%; background-color: #f9fafb; }
+    .signup-wrapper {
+      display: flex; flex-wrap: wrap; background-color: white;
+      width: 100%; height: 100vh;
+    }
+    .signup-container {
+      padding: 2rem 2.5rem; flex: 1; min-width: 300px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .signup-container h2 {
+      text-align: center; margin-bottom: 1.5rem; color: #4f46e5;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 0.75rem; border: 1px solid #ccc;
+      border-radius: 6px; font-size: 1rem;
+    }
+    .form-group button {
+      width: 100%; padding: 0.9rem; background-color: #4f46e5;
+      color: white; border: none; border-radius: 6px;
+      font-size: 1rem; cursor: pointer; transition: background 0.3s ease;
+    }
+    .form-group button:hover { background-color: #4338ca; }
+    .login-link { text-align: center; margin-top: 1rem; font-size: 0.95rem; }
+    .login-link a { color: #4f46e5; text-decoration: none; }
+    .hidden { display: none; }
+    .popup {
+      position: fixed; top: 20px; right: 20px; background-color: #4f46e5;
+      color: white; padding: 1rem 1.5rem; border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2); opacity: 0;
+      transform: translateY(-20px); transition: all 0.4s ease; z-index: 1000;
+    }
+    .popup.show { opacity: 1; transform: translateY(0); }
+    .image-container {
+      flex: 1; min-width: 300px; background-color: white;
+      display: flex; justify-content: center; align-items: center; padding: 2rem;
+    }
+    .image-container img { max-width: 100%; height: auto; border-radius: 10px; }
+    .checkbox-group {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px 20px; margin-top: 0.5rem;
+    }
+    .checkbox-item {
+      display: flex; align-items: center;
+      padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 6px;
+      background-color: #f9f9f9; transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+    .checkbox-item:hover { background-color: #eef2ff; }
+    .checkbox-item input[type="checkbox"] {
+      margin-right: 10px; transform: scale(1.1);
+    }
+    .error-message {
+      color: red; font-size: 0.875rem; margin-top: 4px;
+    }
+    @media (max-width: 900px) {
+      .signup-wrapper { flex-direction: column; height: auto; }
+      .image-container { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="signup-wrapper">
+  <div class="signup-container">
+    <h2>Job Nest</h2>
+    <h2>Create Your Account</h2>
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="role">Select Role</label>
+        <select id="role" required>
+          <option value="">-- Select Role --</option>
+          <option value="client">Client</option>
+          <option value="freelancer">Freelancer</option>
+          
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="companyGroup">
+        <label for="company">Company / Organization Name</label>
+        <input type="text" id="company" />
+      </div>
+
+      <div class="form-group hidden" id="skillGroup">
+        <label>Select Your Expertise <span style="color:red;">*</span></label>
+        <div class="checkbox-group" id="skillsCheckboxes">
+          <label class="checkbox-item"><input type="checkbox" value="Graphic Design" />Graphic Design</label>
+          <label class="checkbox-item"><input type="checkbox" value="Web Development" />Web Development</label>
+          <label class="checkbox-item"><input type="checkbox" value="Content Writing" />Content Writing</label>
+          <label class="checkbox-item"><input type="checkbox" value="Data Entry" />Data Entry</label>
+          <label class="checkbox-item"><input type="checkbox" value="App Development" />App Development</label>
+          <label class="checkbox-item"><input type="checkbox" value="Digital Marketing" />Digital Marketing</label>
+          <label class="checkbox-item"><input type="checkbox" value="Video Editing" />Video Editing</label>
+          <label class="checkbox-item"><input type="checkbox" value="Voice Over" />Voice Over</label>
+          <label class="checkbox-item"><input type="checkbox" id="otherSkillCheckbox" value="Other" />Other</label>
+        </div>
+        <div class="error-message hidden" id="skillError">Please select at least one skill.</div>
+      </div>
+
+      <div class="form-group hidden" id="otherSkillGroup">
+        <label for="otherSkill">Enter Your Specific Skill</label>
+        <input type="text" id="otherSkill" />
+      </div>
+
+      <div class="form-group hidden" id="usernameGroup">
+        <label for="username">Username</label>
+        <input type="text" id="username" />
+      </div>
+
+      <div class="form-group hidden" id="phoneGroup">
+        <label for="phone">Phone Number (Optional)</label>
+        <input type="text" id="phone" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required minlength="6" />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm">Confirm Password</label>
+        <input type="password" id="confirm" required minlength="6" />
+        <div class="error-message hidden" id="passwordError">Passwords do not match.</div>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Sign Up</button>
+      </div>
+      <div class="login-link">
+        Already have an account? <a href="login.html">Login here</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="image-container">
+    <img src="https://i.ibb.co/q3fGhdfM/5216292.jpg" alt="Signup Illustration">
+  </div>
+</div>
+
+<div class="popup" id="popup">Signup successful! 🎉</div>
+
+<script>
+  const roleSelect = document.getElementById('role');
+  const companyGroup = document.getElementById('companyGroup');
+  const skillGroup = document.getElementById('skillGroup');
+  const skillsCheckboxes = document.querySelectorAll('#skillsCheckboxes input[type="checkbox"]');
+  const otherSkillCheckbox = document.getElementById('otherSkillCheckbox');
+  const otherSkillGroup = document.getElementById('otherSkillGroup');
+  const otherSkillInput = document.getElementById('otherSkill');
+  const usernameGroup = document.getElementById('usernameGroup');
+  const phoneGroup = document.getElementById('phoneGroup');
+  const passwordInput = document.getElementById('password');
+  const confirmInput = document.getElementById('confirm');
+  const passwordError = document.getElementById('passwordError');
+  const skillError = document.getElementById('skillError');
+  const popup = document.getElementById('popup');
+
+  roleSelect.addEventListener('change', () => {
+    const role = roleSelect.value;
+    companyGroup.classList.toggle('hidden', role !== 'client');
+    skillGroup.classList.toggle('hidden', role !== 'freelancer');
+    usernameGroup.classList.toggle('hidden', role !== 'admin');
+    phoneGroup.classList.toggle('hidden', role !== 'admin');
+    if (role !== 'freelancer') {
+      otherSkillGroup.classList.add('hidden');
+    }
+  });
+
+  otherSkillCheckbox.addEventListener('change', () => {
+    otherSkillGroup.classList.toggle('hidden', !otherSkillCheckbox.checked);
+    if (!otherSkillCheckbox.checked) otherSkillInput.value = '';
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = passwordInput.value;
+    const confirm = confirmInput.value;
+    const role = roleSelect.value;
+
+    passwordError.classList.add('hidden');
+    skillError.classList.add('hidden');
+
+    if (password !== confirm) {
+      passwordError.classList.remove('hidden');
+      return;
+    }
+
+    if (role === 'freelancer') {
+      const selected = [...skillsCheckboxes].filter(cb => cb.checked);
+      if (selected.length === 0) {
+        skillError.classList.remove('hidden');
+        return;
+      }
+      if (otherSkillCheckbox.checked && otherSkillInput.value.trim() === '') {
+        otherSkillInput.style.borderColor = 'red';
+        otherSkillInput.focus();
+        return;
+      }
+    }
+
+    if (localStorage.getItem('jobnest_user_' + email)) {
+      popup.textContent = "Email already exists. Try logging in.";
+      popup.classList.add('show');
+      setTimeout(() => popup.classList.remove('show'), 3000);
+      return;
+    }
+
+    const user = {
+      email,
+      password,
+      role,
+      fullname: document.getElementById('fullname').value.trim()
+    };
+
+    if (role === 'client') {
+      user.company = document.getElementById('company').value.trim();
+    }
+
+    if (role === 'freelancer') {
+      const selectedSkills = [...skillsCheckboxes]
+        .filter(cb => cb.checked && cb.value !== 'Other')
+        .map(cb => cb.value);
+      if (otherSkillCheckbox.checked) {
+        selectedSkills.push(otherSkillInput.value.trim());
+      }
+      user.skills = selectedSkills;
+    }
+
+    
+
+    localStorage.setItem('jobnest_user_' + email, JSON.stringify(user));
+    popup.textContent = "Signup successful! 🎉";
+    popup.classList.add('show');
+
+    setTimeout(() => {
+      popup.classList.remove('show');
+      window.location.href = "login.html";
+    }, 2500);
+  });
+</script>
+
+</body>
+</html>
