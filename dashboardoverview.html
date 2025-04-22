@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -54,9 +54,321 @@
       color: white;
       padding: 0.5rem 1rem;
       border-radius: 20px;
+      cursor: pointer; /* fixes the cursor */
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      display: inline-block; /* ensures proper box treatment */
+      pointer-events: auto;
+      z-index: 9999 !important;
+      position: relative;
+    }
+
+
+    h1 {
+      text-align: center;
+      margin: 2rem 0 1rem;
+      font-size: 2rem;
+      color: #4f46e5;
+    }
+
+    .overview-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .overview-card {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .overview-card h3 {
+      color: #3730a3;
+      margin-bottom: 1rem;
+    }
+
+    .overview-card p {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    .stats-container {
+      margin: 2rem auto;
+      max-width: 800px;
+      padding: 0 2rem;
+    }
+
+    .stats-container .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .stat-item span {
+      font-size: 1.1rem;
+    }
+
+    .stat-item strong {
+      font-size: 1.3rem;
+      color: #4f46e5;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s ease;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>Job Nest Admin</h2>
+  <nav>
+    <a href="adminhome.html">Home</a>
+    <a href="dashboardoverview.html">Dashboard Overview</a>
+    <a href="pendingjobs.html">Job Verifications</a>
+    <a href="manageusers.html">Manage Users</a>
+    <a href="supportfeedback.html">Support Feedback</a>
+    <button id="logoutBtn" type="button">Logout</button>
+    <div class="admin-name" id="adminName">Admin</div>
+  </nav>
+</header>
+
+<h1>Dashboard Overview</h1>
+
+<div class="overview-container">
+  <div class="overview-card">
+    <h3>✅ Jobs Pending Approval</h3>
+    <p id="totalJobs">0</p>
+  </div>
+  <div class="overview-card">
+    <h3>🟢 Total Approved Jobs</h3>
+    <p id="pendingJobs">0</p>
+  </div>
+  <div class="overview-card">
+    <h3>❌ Total Rejected Jobs</h3>
+    <p id="activeFreelancers">0</p>
+  </div>
+  <div class="overview-card">
+    <h3>👤 Total Clients</h3>
+    <p id="totalClients">0</p>
+  </div>
+  <div class="overview-card">
+    <h3>👨‍💻 Total Freelancers</h3>
+    <p id="totalFreelancers">0</p>
+  </div>
+</div>
+
+
+
+<div class="popup" id="popup">Action completed!</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const logoutBtn = document.getElementById("logoutBtn");
+    const popup = document.getElementById("popup");
+
+    logoutBtn.addEventListener("click", function () {
+      showPopup("Logged out successfully! 👋");
+      localStorage.removeItem("loggedInUser");
+      setTimeout(() => window.location.href = "index.html", 2000);
+    });
+
+    function showPopup(message) {
+      popup.textContent = message;
+      popup.classList.add("show");
+      setTimeout(() => popup.classList.remove("show"), 2500);
+    }
+
+    // Display logged-in admin name
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (loggedInUser && loggedInUser.role === "admin") {
+      document.getElementById("adminName").textContent = loggedInUser.name || "Admin";
+    }
+
+    // Count clients and freelancers
+    let totalClients = 0;
+    let totalFreelancers = 0;
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith("jobnest_user_")) {
+        const user = JSON.parse(localStorage.getItem(key));
+        if (user.role === "client") totalClients++;
+        if (user.role === "freelancer") totalFreelancers++;
+      }
+    }
+
+    // Get all jobs from localStorage
+    let jobs = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith("job_")) {
+        const job = JSON.parse(localStorage.getItem(key));
+        jobs.push(job);
+      }
+    }
+
+    // Calculate stats
+    const pendingJobs = jobs.filter(job => !job.approved && !job.rejected).length;
+    const approvedJobs = jobs.filter(job => job.approved === true && job.rejected !== true).length;
+    const rejectedJobs = jobs.filter(job => job.rejected === true).length;
+
+    // Update UI
+    document.getElementById("pendingJobs").textContent = pendingJobs;
+    document.getElementById("approvedJobs").textContent = approvedJobs;
+    document.getElementById("rejectedJobs").textContent = rejectedJobs;
+    document.getElementById("totalClients").textContent = totalClients;
+    document.getElementById("totalFreelancers").textContent = totalFreelancers;
+  });
+
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Overview - Job Nest Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet"> 
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f4f6fc;
+      color: #333;
+    }
+
+    header {
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .admin-name {
+      font-weight: 500;
+      background-color: white;
+      color: #4f46e5;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    #logoutBtn,
+    #mobileLogoutBtn {
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
       cursor: pointer;
       font-size: 1rem;
       font-weight: 500;
+    }
+
+    .hamburger-menu {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+    }
+
+    .hamburger-menu div {
+      width: 25px;
+      height: 3px;
+      background-color: white;
+      border-radius: 2px;
+    }
+
+    .hamburger-links {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 70px;
+      left: 0;
+      right: 0;
+      background-color: #4f46e5;
+      padding: 1rem;
+      z-index: 999;
+    }
+
+    .hamburger-links a,
+    .hamburger-links button {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 1rem;
+      padding: 0.5rem 0;
+      cursor: pointer;
+    }
+
+    .hamburger-links.show {
+      display: flex;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger-menu {
+        display: flex;
+      }
     }
 
     h1 {
@@ -118,14 +430,31 @@
 
 <header>
   <h2>Job Nest Admin</h2>
+
+  <div class="hamburger-menu" id="hamburgerMenu">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
   <nav>
-    <a href="adminhome.html">Home</a>
-    <a href="dashboardoverview.html">Dashboard Overview</a>
-    <a href="pendingjobs.html">Job Verifications</a>
-    <a href="manageusers.html">Manage Users</a>
-    <a href="supportfeedback.html">Support Feedback</a>
-    <button id="logoutBtn" type="button">Logout</button>
-    <div class="admin-name" id="adminName">Admin</div>
+    <div class="nav-links" id="navLinks">
+      <a href="adminhome.html">Home</a>
+      <a href="dashboardoverview.html">Dashboard Overview</a>
+      <a href="pendingjobs.html">Job Verifications</a>
+      <a href="manageusers.html">Manage Users</a>
+      <a href="supportfeedback.html">Support Feedback</a>
+      <button id="logoutBtn">Logout</button>
+      <div class="admin-name" id="adminName">Admin</div>
+    </div>
+    <div class="hamburger-links" id="hamburgerLinks">
+      <a href="adminhome.html">Home</a>
+      <a href="dashboardoverview.html">Dashboard Overview</a>
+      <a href="pendingjobs.html">Job Verifications</a>
+      <a href="manageusers.html">Manage Users</a>
+      <a href="supportfeedback.html">Support Feedback</a>
+      <button id="mobileLogoutBtn">Logout</button>
+    </div>
   </nav>
 </header>
 
@@ -159,13 +488,23 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const logoutBtn = document.getElementById("logoutBtn");
+    const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
     const popup = document.getElementById("popup");
+    const hamburgerMenu = document.getElementById("hamburgerMenu");
+    const hamburgerLinks = document.getElementById("hamburgerLinks");
 
-    logoutBtn.addEventListener("click", function () {
+    hamburgerMenu.addEventListener("click", function () {
+      hamburgerLinks.classList.toggle("show");
+    });
+
+    function handleLogout() {
       showPopup("Logged out successfully! 👋");
       localStorage.removeItem("loggedInUser");
       setTimeout(() => window.location.href = "index.html", 2000);
-    });
+    }
+
+    logoutBtn.addEventListener("click", handleLogout);
+    mobileLogoutBtn.addEventListener("click", handleLogout);
 
     function showPopup(message) {
       popup.textContent = message;
@@ -173,13 +512,11 @@
       setTimeout(() => popup.classList.remove("show"), 2500);
     }
 
-    // Display logged-in admin name
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
     if (loggedInUser && loggedInUser.role === "admin") {
       document.getElementById("adminName").textContent = loggedInUser.name || "Admin";
     }
 
-    // Count clients and freelancers
     let totalClients = 0;
     let totalFreelancers = 0;
 
@@ -192,7 +529,6 @@
       }
     }
 
-    // Get all jobs from localStorage
     let jobs = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -202,12 +538,10 @@
       }
     }
 
-    // Calculate stats
     const pendingJobs = jobs.filter(job => !job.approved && !job.rejected).length;
     const approvedJobs = jobs.filter(job => job.approved === true && job.rejected !== true).length;
     const rejectedJobs = jobs.filter(job => job.rejected === true).length;
 
-    // Update UI
     document.getElementById("pendingJobs").textContent = pendingJobs;
     document.getElementById("approvedJobs").textContent = approvedJobs;
     document.getElementById("rejectedJobs").textContent = rejectedJobs;
